@@ -1,0 +1,20 @@
+# ROS 2 / colcon build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+
+# Recordings
+*.bag
+rosbag2_*/
+
+# Model weights / large assets (document where to get these instead)
+*.pt
+*.onnx
+*.usd
+
+# Keep the small USD scene files (override the *.usd ignore)
+!assets/scenes/*.usd

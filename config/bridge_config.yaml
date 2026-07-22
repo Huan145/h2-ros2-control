@@ -1,0 +1,38 @@
+# bridge_config.yaml
+# Run with --mode compress on apt-ipc host
+# Run with --mode decompress on apt2 host
+# No separate compressor/decompressor nodes needed
+# Topic names stay the same on both sides - transparent compression
+
+topics:
+  # apt-ipc (domain 99) → apt2 (domain 0)
+  /rgb:
+    type: sensor_msgs/msg/Image
+    from_domain: 99
+    to_domain: 0
+
+  /depth:
+    type: sensor_msgs/msg/Image
+    from_domain: 99
+    to_domain: 0
+
+  /segmentation_mask:
+    type: sensor_msgs/msg/Image
+    from_domain: 99
+    to_domain: 0
+
+  /camera_info:
+    type: sensor_msgs/msg/CameraInfo
+    from_domain: 99
+    to_domain: 0
+
+  # apt2 (domain 0) → apt-ipc (domain 99)
+  /tracking/output:
+    type: vision_msgs/msg/Detection3DArray
+    from_domain: 0
+    to_domain: 99
+
+  /tracking_visualization:
+    type: sensor_msgs/msg/Image
+    from_domain: 0
+    to_domain: 99
