@@ -31,8 +31,8 @@ Control chain:
 
 | Machine | ROS_DOMAIN_ID | Runs |
 |---|---|---|
-| apt-ipc | 99 | Isaac Sim, control nodes, semantic mask |
-| apt2 | 0 | FoundationPose container |
+| Sim / control | 99 | Isaac Sim, control nodes, semantic mask, visualizer |
+| Perception | 0 | FoundationPose container |
 
 The domains are isolated by design; topics are forwarded with the standard
 `domain_bridge` package.
@@ -61,10 +61,11 @@ Create the environments:
     conda env create -f envs/h2_rl.yml
     conda env create -f envs/ik_env.yml
 
-Always source ROS 2 after activating:
+Every terminal needs the env activated, ROS 2 sourced, and the domain set:
 
     conda activate <env>
     source /opt/ros/jazzy/setup.bash
+    export ROS_DOMAIN_ID=<domain>      # sim/control machine: 99, perception machine: 0
 
 ## Running
 

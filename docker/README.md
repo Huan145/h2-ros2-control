@@ -1,7 +1,7 @@
 # Perception container (FoundationPose)
 
 The FoundationPose perception pipeline runs inside a container on the
-perception machine (`apt2`), not on the host.
+perception machine, not on the host.
 
 ## Image
 
