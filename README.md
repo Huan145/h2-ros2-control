@@ -99,3 +99,20 @@ FoundationPose pipeline: see `docker/README.md` (runs inside the container).
 
 - USD scenes are flattened snapshots; re-flatten and re-commit if you modify one.
 - Binary assets (STL, USD, PNG) are tracked with Git LFS.
+
+## Visualization
+
+Image streams are viewed with RViz2 on the sim/control machine:
+
+    source /opt/ros/jazzy/setup.bash
+    export ROS_DOMAIN_ID=99
+    rviz2
+
+Add Image displays for:
+
+| Topic | Shows |
+|---|---|
+| `/rgb` | camera feed from Isaac Sim |
+| `/depth` | depth stream |
+| `/segmentation_mask` | binary mask of the target object |
+| `/tracking_visualization` | RGB + box wireframe + grasp point markers |
