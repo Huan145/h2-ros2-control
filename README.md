@@ -40,13 +40,10 @@ The domains are isolated by design; topics are forwarded with the standard
     sudo apt-get install -y ros-jazzy-domain-bridge
     ros2 run domain_bridge domain_bridge config/bridge_config.yaml
 
-Run it on both machines. `config/bridge_config.yaml` forwards /rgb, /depth and
-/segmentation_mask from domain 99 to domain 0.
+Run it on both machines. `config/bridge_config.yaml` forwards camera topics
+(/rgb, /depth, /camera_info, /segmentation_mask) from domain 99 to domain 0, and
+results (/tracking/output, /tracking_visualization) back from domain 0 to 99.
 
-NOTE: only the outbound direction is configured. `/tracking/output`, produced by
-FoundationPose on apt2 (domain 0) and consumed by the visualizer on apt-ipc
-(domain 99), is not currently forwarded back. The full cross-machine loop has
-not been run end to end; nodes have so far been tested individually.
 
 ## Nodes and environments
 
