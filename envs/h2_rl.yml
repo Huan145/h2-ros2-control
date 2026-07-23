@@ -1,0 +1,28 @@
+# Environment for the RL locomotion controller:
+#   nodes/control/h2_fullbody_controller.py
+#
+# Python 3.12 is required — it must match the Python version of the ROS 2
+# distro (Jazzy ships rclpy for 3.12). A mismatch gives:
+#   ModuleNotFoundError: No module named 'rclpy._rclpy_pybind11'
+#
+# torch is CPU-only: policy inference is a small MLP and does not need GPU,
+# which also avoids CUDA version conflicts with the training environment.
+#
+# Create:
+#   conda env create -f envs/h2_rl.yml
+#   conda activate h2_rl
+#   source /opt/ros/jazzy/setup.bash
+
+name: h2_rl
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      # NOTE: the +cpu build may not resolve from PyPI. If it fails, install with:
+      #   pip install torch==2.12.1 --index-url https://download.pytorch.org/whl/cpu
+      - torch==2.12.1+cpu
+      - numpy==2.5.0
+      # ROS 2 Jazzy Python client library
+      - rclpy==7.1.11

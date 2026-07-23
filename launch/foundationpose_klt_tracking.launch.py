@@ -2,6 +2,11 @@
 """
 FoundationPose + Tracking launch file for KLT box in Isaac Sim.
 
+RUNS INSIDE the Isaac ROS container (isaac_ros_foundationpose_custom) on the
+perception machine — not on the host. All paths here are container-internal;
+ISAAC_ROS_WS defaults to /workspaces/isaac_ros-dev (the mounted workspace).
+See docker/README.md for the image and run command.
+
 Pipeline:
   Isaac Sim → /rgb, /depth, /camera_info    ]
   semantic_mask_node.py → /segmentation_mask ]
@@ -28,11 +33,11 @@ from launch_ros.actions import ComposableNodeContainer, Node
 from launch_ros.descriptions import ComposableNode
 
 # ── Paths ────────────────────────────────────────────────────────────────────
-ISAAC_ROS_WS          = '/workspaces/isaac_ros-dev'
+ISAAC_ROS_WS          = os.environ.get('ISAAC_ROS_WS', '/workspaces/isaac_ros-dev')
 FOUNDATIONPOSE_MODELS = os.path.join(ISAAC_ROS_WS, 'isaac_ros_assets', 'models', 'foundationpose')
 REFINE_ENGINE_PATH    = os.path.join(FOUNDATIONPOSE_MODELS, 'refine_trt_engine.plan')
 SCORE_ENGINE_PATH     = os.path.join(FOUNDATIONPOSE_MODELS, 'score_trt_engine.plan')
-MESH_FILE_PATH        = '/workspaces/isaac_ros-dev/KLT_box/KLT_box_metres.obj'
+MESH_FILE_PATH        = os.path.join(ISAAC_ROS_WS, 'KLT_box', 'KLT_box_metres.obj')
 TEXTURE_PATH          = ''
 
 

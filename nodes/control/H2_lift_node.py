@@ -45,10 +45,12 @@ import pinocchio as pin
 import numpy as np
 from scipy.spatial.transform import Rotation, Slerp
 import time
+import os
 
 # ── Constants (mirrors H2_ik_node.py) ───────────────────────────────────────
 
-URDF_PATH      = "/home/apt-ipc/h2_description/H2.urdf"
+_REPO_ROOT     = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+URDF_PATH      = os.path.join(_REPO_ROOT, "assets", "h2_description", "H2.urdf")
 LEFT_EE_FRAME  = "left_hand_link"
 RIGHT_EE_FRAME = "right_hand_link"
 

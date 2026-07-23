@@ -39,7 +39,9 @@ Run:
   python3 h2_fullbody_controller.py
 """
 
+import argparse
 import io
+import os
 import numpy as np
 import rclpy
 import torch
@@ -53,20 +55,18 @@ from message_filters import Subscriber, TimeSynchronizer
 # CONFIG
 # ============================================================================
 
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-05-25_09-21-25/exported/policy.pt"
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-09_15-21-41/exported/policy.pt"
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-13_14-50-31/exported/policy.pt"
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-14_11-25-11/exported/policy.pt"
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-14_13-16-16/exported/policy.pt" #model_3000.pt - stable
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-14_16-08-43/exported/policy.pt"
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-15_11-33-47/exported/policy.pt"
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-15_15-36-01/exported/policy.pt"
-# POLICY_PATH = "/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-15_16-07-25/exported/policy.pt" #model_4000.pt - stable 
-# POLICY_PATH="/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-16_09-22-21/exported/policy.pt"
-# POLICY_PATH="/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-16_11-57-56/exported/policy.pt"
-# POLICY_PATH="/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-16_14-18-01/exported/policy.pt"
-POLICY_PATH="/home/apt-ipc/IsaacLab/logs/rsl_rl/h2_flat/2026-07-16_16-56-57/exported/policy.pt" #best stable model
+# ============================================================================
+# Policy is loaded from the repo's models/ folder (repo-relative, portable).
+# Select which policy with:  python3 h2_fullbody_controller.py --policy <file>
+# Default is models/policy.pt. Weights aren't committed — see models/README.md.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_MODELS_DIR = os.path.join(_REPO_ROOT, "models")
 
+_parser = argparse.ArgumentParser()
+_parser.add_argument("--policy", default="policy.pt",
+                     help="policy filename inside models/ (default: policy.pt)")
+_args, _ = _parser.parse_known_args()
+POLICY_PATH = os.path.join(_MODELS_DIR, _args.policy)
 ACTION_SCALE = 0.5   # confirmed: actions.joint_pos.scale in env.yaml
 DECIMATION = 4       # confirmed: env.yaml decimation (policy runs every 4th tick)
 NUM_JOINTS = 31

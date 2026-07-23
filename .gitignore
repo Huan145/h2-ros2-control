@@ -18,3 +18,7 @@ rosbag2_*/
 
 # Keep the small USD scene files (override the *.usd ignore)
 !assets/scenes/*.usd
+
+# Model weights — see models/README.md
+models/*.pt
+models/*.onnx
