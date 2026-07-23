@@ -118,3 +118,60 @@ Add Image displays for:
 | `/depth` | depth stream |
 | `/segmentation_mask` | binary mask of the target object |
 | `/tracking_visualization` | RGB + box wireframe + grasp point markers |
+
+## Network prerequisites (both machines)
+
+Two settings are required for ROS 2 data to flow between the machines. Without
+them, discovery succeeds but no data is delivered: topics appear in
+`ros2 topic list` while `ros2 topic hz` hangs indefinitely, with no error.
+
+### 1. UDP receive buffers
+
+Raise the kernel limits (the Ubuntu default is too small for image topics):
+
+    echo "net.core.rmem_max=8388608" | sudo tee -a /etc/sysctl.conf
+    echo "net.core.rmem_default=8388608" | sudo tee -a /etc/sysctl.conf
+    sudo sysctl -p
+
+`sysctl -w` alone does not survive a reboot.
+
+### 2. Restrict DDS to the wired LAN
+
+Both machines have several network interfaces (wired LAN, WiFi, docker0).
+Fast DDS advertises all of them and may attempt data transfer over an
+unreachable one. Restrict it to the wired interface with a profile per machine:
+
+    mkdir -p ~/.ros
+    cat > ~/.ros/fastdds_lan_only.xml << 'XML'
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <dds xmlns="http://www.eprosima.com">
+      <profiles>
+        <transport_descriptors>
+          <transport_descriptor>
+            <transport_id>lan_udp</transport_id>
+            <type>UDPv4</type>
+            <interfaceWhiteList>
+              <address>THIS_MACHINE_WIRED_IP</address>
+            </interfaceWhiteList>
+          </transport_descriptor>
+        </transport_descriptors>
+        <participant profile_name="lan_only" is_default_profile="true">
+          <rtps>
+            <userTransports>
+              <transport_id>lan_udp</transport_id>
+            </userTransports>
+            <useBuiltinTransports>false</useBuiltinTransports>
+          </rtps>
+        </participant>
+      </profiles>
+    </dds>
+    XML
+
+Replace `THIS_MACHINE_WIRED_IP` with the machine's own wired address, then:
+
+    echo 'export FASTRTPS_DEFAULT_PROFILES_FILE=$HOME/.ros/fastdds_lan_only.xml' >> ~/.bashrc
+
+The container needs the same profile — see `docker/README.md`.
+
+Note: the profile hardcodes IPs, so static addresses (or DHCP reservations)
+are recommended.
