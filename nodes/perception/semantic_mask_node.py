@@ -7,7 +7,7 @@ Looks up the target object's semantic ID dynamically by label name,
 so it works even when Isaac Sim reassigns IDs across sessions.
 
 Subscribes: /semantic_segmentation         (sensor_msgs/Image, 32SC1)
-            /semantic_segmentation/labels  (std_msgs/String, JSON label map)
+            /semantic_labels               (std_msgs/String, JSON label map)
 Publishes:  /segmentation_mask             (sensor_msgs/Image, mono8)
 """
 
@@ -44,7 +44,7 @@ class SemanticMaskNode(Node):
         # This topic publishes a JSON string mapping ID → label
         self.sub_labels = self.create_subscription(
             String,
-            '/semantic_segmentation/labels',
+            '/semantic_labels',
             self.labels_callback,
             10
         )
@@ -104,7 +104,7 @@ class SemanticMaskNode(Node):
         if self.target_id is None:
             self.get_logger().warn(
                 f'Waiting for label map to find ID for "{TARGET_LABEL}". '
-                f'Checking if /semantic_segmentation/labels is published...',
+                f'Checking if /semantic_labels is published...',
                 throttle_duration_sec=5.0
             )
             # Fallback: print unique IDs to help debugging
