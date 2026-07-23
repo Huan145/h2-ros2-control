@@ -1,8 +1,8 @@
 # bridge_config.yaml
-# Run with --mode compress on apt-ipc host
-# Run with --mode decompress on apt2 host
-# No separate compressor/decompressor nodes needed
-# Topic names stay the same on both sides - transparent compression
+# Forwards topics between ROS 2 domains using the standard domain_bridge package.
+#   sudo apt-get install -y ros-jazzy-domain-bridge
+#   ros2 run domain_bridge domain_bridge config/bridge_config.yaml
+# Run on both machines. Topic names stay the same on both sides.
 
 topics:
   # apt-ipc (domain 99) → apt2 (domain 0)
