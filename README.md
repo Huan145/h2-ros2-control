@@ -88,8 +88,10 @@ FoundationPose pipeline: see `docker/README.md` (runs inside the container).
 ## Assets and models
 
 - `assets/h2_description/` - H2 URDF + STL meshes (used by the IK nodes)
-- `assets/KLT_box/` - KLT box mesh for FoundationPose; copy into the container's
-  mounted workspace so it lands at `/workspaces/isaac_ros-dev/KLT_box/`
+- `assets/KLT_box/` - KLT box assets. `KLT_box_metres.obj` is used by
+  FoundationPose for pose matching; copy it into the container's mounted
+  workspace so it lands at `/workspaces/isaac_ros-dev/KLT_box/`. `klt_box.usd`
+  is a self-contained USD for adding the box to new Isaac Sim scenes.
 - `assets/scenes/` - Isaac Sim scene USDs (flattened, self-contained)
 - `models/` - trained policies, not committed; see `models/README.md`
 - FoundationPose weights are not committed; download from NVIDIA NGC into the
