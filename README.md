@@ -40,7 +40,7 @@ The domains are isolated by design; topics are forwarded with the standard
     sudo apt-get install -y ros-jazzy-domain-bridge
     ros2 run domain_bridge domain_bridge config/bridge_config.yaml
 
-Run it on both machines. `config/bridge_config.yaml` forwards camera topics
+Run one instance (on either machine — it bridges both directions). `config/bridge_config.yaml` forwards camera topics
 (/rgb, /depth, /camera_info, /segmentation_mask) from domain 99 to domain 0, and
 results (/tracking/output, /tracking_visualization) back from domain 0 to 99.
 
