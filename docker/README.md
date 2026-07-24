@@ -9,8 +9,8 @@ perception machine, not on the host.
 with FoundationPose. It was built on the sim/control machine from NVIDIA's
 Isaac ROS FoundationPose base image, then transferred to the perception
 machine. The customisations were made with `docker commit` rather than a
-Dockerfile, so the image is not currently reproducible from source.
-Writing a Dockerfile is a TODO.
+Dockerfile. `docker/Dockerfile` now reproduces the same environment from
+the same NVIDIA base image.
 
 ## Run
 
@@ -86,7 +86,12 @@ These are not committed to this repo (large, downloadable, or NVIDIA-provided):
 back to a flat colour. Pose estimation works; adding a proper UV-mapped
 texture could improve matching accuracy.
 
-## TODO
+## Building from the Dockerfile
 
-- Write a Dockerfile capturing the customisations on top of NVIDIA's base
-  image, so the environment is reproducible.
+`docker/Dockerfile` reproduces this environment from NVIDIA's base image:
+
+    docker build -t isaac_ros_foundationpose_custom:v2 -f docker/Dockerfile .
+
+Verified to build and produce the FoundationPose node libraries. Note that
+apt will install current package versions, which may be newer than those in
+the existing v1 image.

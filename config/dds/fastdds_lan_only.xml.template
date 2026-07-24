@@ -16,6 +16,7 @@
         <type>UDPv4</type>
         <interfaceWhiteList>
           <address>THIS_MACHINE_WIRED_IP</address>
+          <address>127.0.0.1</address>
         </interfaceWhiteList>
       </transport_descriptor>
     </transport_descriptors>

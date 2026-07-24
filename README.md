@@ -152,6 +152,7 @@ unreachable one. Restrict it to the wired interface with a profile per machine:
             <type>UDPv4</type>
             <interfaceWhiteList>
               <address>THIS_MACHINE_WIRED_IP</address>
+              <address>127.0.0.1</address>
             </interfaceWhiteList>
           </transport_descriptor>
         </transport_descriptors>
@@ -175,3 +176,12 @@ The container needs the same profile — see `docker/README.md`.
 
 Note: the profile hardcodes IPs, so static addresses (or DHCP reservations)
 are recommended.
+
+Loopback (`127.0.0.1`) is included so single-machine work still functions when
+the wired interface is down. Without it, Fast DDS fails to start any transport:
+
+    [TRANSPORT_UDPV4 Error] All whitelist interfaces were filtered out
+    [RTPS_PARTICIPANT Error] No unicast locators to create unique flows
+
+If you hit that error with loopback already present, the wired IP in the
+profile no longer matches any active interface — check `ip addr` and update it.
