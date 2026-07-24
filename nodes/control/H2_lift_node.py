@@ -88,7 +88,7 @@ IK_DAMP                 = 1e-6
 REACHABILITY_THRESH_M   = 0.03   # 30mm — matches H2_ik_node.py
 WAYPOINT_STEP_M         = 0.02   # 20mm Cartesian steps
 
-APPROACH_DIST_M = 0.15   # pinch-inward distance for Stage 1 (box-relative)
+APPROACH_DIST_M = 0.07   # pinch-inward distance for Stage 1 (box-relative)
 
 LIFT_X            = 0.20    # fixed Stage 2 carry-pose target — confirmed reachable
 LIFT_HALF_WIDTH_Y = 0.20    # 40cm apart total, ±20cm from centerline

@@ -42,7 +42,13 @@ import cv2
 import time
 
 AXIS_LENGTH  = 0.12
-GRASP_REACH  = 0.10   # metres outside the box Y face
+GRASP_REACH  = 0.05   # metres outside the box Y face
+
+# Extra fixed offset applied to both grasp points AFTER transforming to
+# pelvis frame (x=forward, y=left, z=up).
+#   x: negative = closer to the robot/camera (less forward reach)
+#   z: negative = lower
+GRASP_PELVIS_OFFSET = np.array([-0.09, 0.0, 0.02])   # (forward, left, up) metres
 
 PELVIS_FRAME = 'pelvis'
 CAMERA_FRAME = 'Camera'
@@ -263,11 +269,22 @@ def draw_overlay(img_bgr, pose, box_size, fx, fy, cx, cy):
                 f"cam: fx={fx:.1f} cx={cx:.1f} cy={cy:.1f}",
                 (10, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (150,150,150), 1)
 
-    # Grasp points in object frame
+    # Grasp points in object frame (on the box ±Y faces, standoff = GRASP_REACH)
     g1_obj = np.array([0.0,  hy + GRASP_REACH, 0.0])
     g2_obj = np.array([0.0, -(hy + GRASP_REACH), 0.0])
 
-    grasp_px = project(np.stack([g1_obj, g2_obj]), R, t, fx, fy, cx, cy)
+    # Transform to camera frame (raw box-face points, no offset here —
+    # the closer/lower nudge is applied later in PELVIS frame, see
+    # GRASP_PELVIS_OFFSET in rgb_callback)
+    g1_cam = obj_to_cam(g1_obj, R, t)
+    g2_cam = obj_to_cam(g2_obj, R, t)
+
+    grasp_px = np.full((2, 2), -1.0)
+    for i, p_cam in enumerate([g1_cam, g2_cam]):
+        if p_cam[2] > 0:
+            grasp_px[i, 0] = fx * p_cam[0] / p_cam[2] + cx
+            grasp_px[i, 1] = fy * p_cam[1] / p_cam[2] + cy
+
     for (label, color), (gx, gy) in zip(
             [('G1',(0,255,255)), ('G2',(0,120,255))], grasp_px):
         if gx < 0:
@@ -279,9 +296,6 @@ def draw_overlay(img_bgr, pose, box_size, fx, fy, cx, cy):
         cv2.circle(img_bgr, (cxi,cyi), 4, color, -1, cv2.LINE_AA)
         cv2.putText(img_bgr, label, (cxi+h+4, cyi-h+4),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2, cv2.LINE_AA)
-
-    g1_cam = obj_to_cam(g1_obj, R, t)
-    g2_cam = obj_to_cam(g2_obj, R, t)
 
     return img_bgr, g1_cam, g2_cam, R   # R = R_box_cam
 
@@ -411,6 +425,10 @@ class PoseOverlayVisualizerTracking(Node):
                 # ── Grasp positions in pelvis frame ───────────────────────────
                 g1_pelvis = cam_to_pelvis(g1_cam, T_pelvis_cam)
                 g2_pelvis = cam_to_pelvis(g2_cam, T_pelvis_cam)
+
+                # Nudge both grasp points: 5cm closer to camera/robot, 5cm lower
+                g1_pelvis = g1_pelvis + GRASP_PELVIS_OFFSET
+                g2_pelvis = g2_pelvis + GRASP_PELVIS_OFFSET
 
                 # ── Grasp orientations aligned with box face normal ────────────
                 # hand Y axis is aligned with ±box_Y_pelvis
